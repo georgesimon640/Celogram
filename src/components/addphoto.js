@@ -12,10 +12,10 @@ const [description, setDescription] = useState('');
   <div class="form-row">
     
       <input type="text" class="form-control" value={image}
-           onChange={(e) => setImage(e.target.value)} placeholder="image"/>
+           onChange={(e) => setImage(e.target.value)} placeholder="image" required/>
            
       <input type="text" class="form-control mt-2" value={description}
-           onChange={(e) => setDescription(e.target.value)} placeholder="description"/>
+           onChange={(e) => setDescription(e.target.value)} placeholder="description" required/>
 
       <button type="button" onClick={()=>props.addPhoto(image, description)} class="btn btn-info mt-2">Add Photo</button>
   </div>
