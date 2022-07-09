@@ -33,7 +33,7 @@ function App() {
   const [photos, setPhotos] = useState([]);
   
 
-
+  // connect user wallet to app
   const connectToWallet = async () => {
     if (window.celo) {
       try {
@@ -55,6 +55,7 @@ function App() {
     }
   };
 
+  // get user balance from app
   const getBalance = useCallback(async () => {
     try {
       const balance = await kit.getTotalBalance(address);
@@ -70,6 +71,7 @@ function App() {
 
 
 
+  // get all photos from contract
   const getPhotos = useCallback(async () => {
     const photosLength = await contract.methods.getPhotosLength().call();
     const photos = [];
@@ -95,6 +97,7 @@ function App() {
   }, [contract]);
 
 
+  // add new photo to contract
   const addPhoto = async (
     _image,
     _description,
@@ -111,6 +114,7 @@ function App() {
     }
   };
 
+  // edit description of photo at index @_index
   const editDescription = async (_index, _newDescription) => { 
     try {
       await contract.methods.editDescription(_index, _newDescription).send({ from: address });
@@ -122,6 +126,7 @@ function App() {
 
 
 
+    // like photo at index @_index
     const likePhoto = async (_index) => { 
       try {
         await contract.methods.like(_index).send({ from: address });
@@ -131,8 +136,7 @@ function App() {
         alert(error);
       }};
 
-
-
+// delete photo at index @_index
   const deletePhoto = async (
     _index
   ) => {
@@ -146,7 +150,7 @@ function App() {
     }
   };
 
-
+  // reward photo at index @_index with @_ammount
   const rewardPhoto = async (_index, _ammount) => {
     try {
       const cUSDContract = new kit.web3.eth.Contract(IERC, cUSDContractAddress);
