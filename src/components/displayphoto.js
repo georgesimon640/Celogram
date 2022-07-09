@@ -17,7 +17,7 @@ export const Photos = (props) => {
       <h5 class="card-title">{p.rewards} Rewards</h5>
       <p class="card-text">{p.description}</p>
       { props.walletAddress !== p.owner &&(
-      <button type="button" onClick={()=>props.likePhoto(p.index)} class="btn btn-primary mt-2">Like Photo</button>
+      <button type="button" onClick={()=>props.likePhoto(p.index)} class="btn btn-info mt-2">Like Photo</button>
       )
 }
 
@@ -26,19 +26,19 @@ export const Photos = (props) => {
   <div class="form-r">
       <input type="text" class="form-control mt-4" value={newDescription}
            onChange={(e) => setNewDescription(e.target.value)} placeholder="edit description"/>
-      <button type="button" onClick={()=>props.editDescription(p.index, newDescription)} class="btn btn-primary mt-2">edit description</button>
+      <button type="button" onClick={()=>props.editDescription(p.index, newDescription)} class="btn btn-info mt-2">edit description</button>
       
   </div>
 </form>
 )}
 
 
-{ props.walletAddress !== p.owner && (
+{ props.walletAddress !== p.owner && p.likes > 0 && (
      <form>
   <div class="form-r">
       <input type="text" class="form-control mt-4" value={ammount}
            onChange={(e) => setAmmount(e.target.value)} placeholder="enter ammount"/>
-      <button type="button" onClick={()=>props.rewardPhoto(p.index, ammount)} class="btn btn-primary mt-2">Reward Photo</button>
+      <button type="button" onClick={()=>props.rewardPhoto(p.index, ammount)} class="btn btn-info mt-2">Reward Photo</button>
       
   </div>
 </form>
@@ -49,7 +49,7 @@ export const Photos = (props) => {
                     <button
                       type="submit"
                       onClick={() => props.deletePhoto(p.index)}
-                      className="btn btn-dark m-3"
+                      className="btn btn-info m-3"
                     >
                       remove this photo
                     </button>

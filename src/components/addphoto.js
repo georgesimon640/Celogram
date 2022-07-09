@@ -17,7 +17,7 @@ const [description, setDescription] = useState('');
       <input type="text" class="form-control mt-2" value={description}
            onChange={(e) => setDescription(e.target.value)} placeholder="description"/>
 
-      <button type="button" onClick={()=>props.addPhoto(image, description)} class="btn btn-dark mt-2">Add Photo</button>
+      <button type="button" onClick={()=>props.addPhoto(image, description)} class="btn btn-info mt-2">Add Photo</button>
   </div>
 </form>
   </div>;
