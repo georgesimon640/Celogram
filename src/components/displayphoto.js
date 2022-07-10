@@ -1,10 +1,31 @@
 import React from 'react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Photos = (props) => {
-
-  const [newDescription, setNewDescription] = useState('');
   const [ammount, setAmmount] = useState('');
+  const [allDesc, setAllDesc] = useState({});
+
+  const descArr = () => {
+    props.photos.forEach((photo) => {      
+      setAllDesc((prev) => {
+       return { ...prev, [photo.index]: "" };      
+    });
+  })}
+
+  const handleDescChange = (index, description) => {  
+    setAllDesc(prev => {
+        return {...prev, [index]: description}
+    })
+  };
+
+  const handleDesc = (index) => {
+    const desc = allDesc[index];
+    props.editDescription(index, desc)
+  };
+
+  useEffect(() => {
+    descArr();
+  }, []);
 
 
   return <div className="card-container">
@@ -21,18 +42,19 @@ export const Photos = (props) => {
       )
 }
 
+{/* only owner can edit description */}
 { props.walletAddress === p.owner && (
      <form>
   <div class="form-r">
-      <input type="text" class="form-control mt-4" value={newDescription}
-           onChange={(e) => setNewDescription(e.target.value)} placeholder="edit description"/>
-      <button type="button" onClick={()=>props.editDescription(p.index, newDescription)} class="btn btn-info mt-2">edit description</button>
+      <input type="text" class="form-control mt-4" value={allDesc[p.index]}
+           onChange={(e) => handleDescChange(p.index, e.target.value)} placeholder="edit description"/>
+      <button type="button" onClick={()=> handleDesc(p.index)} class="btn btn-info mt-2">edit description</button>
       
   </div>
 </form>
 )}
 
-
+{/* all users except owner can reward photo */}
 { props.walletAddress !== p.owner && p.likes > 0 && (
      <form>
   <div class="form-r">

@@ -26,6 +26,18 @@ contract Celogram {
     }
 
     mapping (uint => Photo) internal photos;
+    mapping(uint256 => mapping(address => bool)) likes;
+
+    modifier indexExists(uint256 _index) {
+        require(_index < photosLength, "Index does not exist");
+        _;
+    }
+
+    event AddPhoto(uint256 index);
+    event LikePhoto(uint256 index, address indexed user);
+    event UnLikePhoto(uint256 index, address indexed user);
+    event DeletePhoto(uint256 index, address indexed user);
+    event Edit(uint256 index);
 
 
 // adding a new photo to celogram
@@ -42,33 +54,48 @@ contract Celogram {
             _likes,
             _rewards
         );
+        emit AddPhoto(photosLength);
         photosLength++;
     }
 
       // deleting photo 
-        function deletePhoto(uint _index) external {
+        function deletePhoto(uint _index) external indexExists(_index) {
 	        require(msg.sender == photos[_index].owner, "can't delete photo not the owner");         
             photos[_index] = photos[photosLength - 1];
             delete photos[photosLength - 1];
             photosLength--; 
+
+            emit DeletePhoto(_index, msg.sender);
 	 }
 
 
-// liking a photo
-    function like(uint _index) external{
+// like/un-like a photo 
+    function like(uint _index) external indexExists(_index) {
         require(msg.sender != photos[_index].owner, "Owner cannot like photo");
-        photos[_index].likes++;
+        bool hasLiked = likes[_index][msg.sender];
+        if (hasLiked) {
+            // un-like a photo if user already liked
+            photos[_index].likes--;
+            likes[_index][msg.sender] = false;
+            emit UnLikePhoto(_index, msg.sender);
+        } else {
+            // like photo if user has not liked
+            photos[_index].likes++;
+            likes[_index][msg.sender] = true;
+            emit LikePhoto(_index, msg.sender);
+        }
     }
 
 // editing the description of the photo
-    function editDescription(uint _index, string memory _newDescription) external{
+    function editDescription(uint _index, string memory _newDescription) external indexExists(_index) {
         require(msg.sender == photos[_index].owner, "Not Owner");
         photos[_index].description = _newDescription;
+        emit Edit(_index);
     }
 
 
 // get photo from mapping
-    function getPhoto(uint _index) public view returns (
+    function getPhoto(uint _index) public view indexExists(_index) returns (
         address payable, 
         string memory, 
         string memory,       
@@ -88,8 +115,8 @@ contract Celogram {
 
 
     //tipping a photo (likes must be upto 1 to activate rewarding
-    function rewardPhoto(uint _index, uint _ammount) public payable  {
-        require(photos[_index].likes >= 1, "likes must be upto 5 to enable tipping");
+    function rewardPhoto(uint _index, uint _ammount) public payable indexExists(_index) {
+        require(photos[_index].likes >= 1, "likes must be up to 1 to enable tipping");
         require(
           IERC20Token(cUsdTokenAddress).transferFrom(
             msg.sender,
